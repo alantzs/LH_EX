@@ -1,4 +1,4 @@
-name: Build LH EX
+name: Build LH Launcher
 on: [push]
 jobs:
   build:
@@ -6,11 +6,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v1
       - name: Compile LH EX
-        run: csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll main.cs
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        run: csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll main.cs
+      - name: Release LH EX
+        uses: actions/upload-artifact@v3
         with:
-          name: LH_EX_Executable
+          name: LH_EX_PC
           path: LH_EX.exe
