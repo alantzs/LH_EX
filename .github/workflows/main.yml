@@ -1,0 +1,16 @@
+name: Build LH EX
+on: [push]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Compile LH EX
+        run: csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll main.cs
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: LH_EX_Executable
+          path: LH_EX.exe
