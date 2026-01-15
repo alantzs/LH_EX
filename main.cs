@@ -1,54 +1,70 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Net;
 
 namespace LH_EX_Launcher
 {
     public class LH_Launcher : Form
     {
-        // Для поиска окна Роблокса
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll")]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         public LH_Launcher()
         {
-            this.Size = new Size(550, 300);
+            this.Size = new Size(600, 400);
             this.FormBorderStyle = FormBorderStyle.None;
-            this.BackColor = Color.FromArgb(20, 15, 30);
+            this.BackColor = Color.FromArgb(15, 10, 25);
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // Логотип
-            Label logo = new Label { Text = "LH EXECUTOR", ForeColor = Color.MediumPurple, Font = new Font("Arial", 18, FontStyle.Bold), Location = new Point(180, 30), AutoSize = true };
-            this.Controls.Add(logo);
+            // Заголовок
+            Label title = new Label { Text = "LH EXECUTOR SYSTEM V1", ForeColor = Color.MediumPurple, Font = new Font("Segoe UI", 16, FontStyle.Bold), Location = new Point(20, 20), AutoSize = true };
+            this.Controls.Add(title);
 
-            // Кнопка INJECT
-            Button injectBtn = new Button {
-                Text = "ATTACH TO ROBLOX",
-                Size = new Size(200, 50),
-                Location = new Point(175, 120),
+            // ПОЛЕ ДЛЯ СКРИПТА (Тут ты будешь писать код)
+            RichTextBox scriptBox = new RichTextBox {
+                Location = new Point(20, 70),
+                Size = new Size(560, 220),
+                BackColor = Color.FromArgb(30, 20, 45),
+                ForeColor = Color.Lime,
+                BorderStyle = BorderStyle.None,
+                Font = new Font("Consolas", 10)
+            };
+            this.Controls.Add(scriptBox);
+
+            // Кнопка EXECUTE
+            Button execBtn = new Button {
+                Text = "EXECUTE",
+                Size = new Size(120, 40),
+                Location = new Point(20, 310),
                 FlatStyle = FlatStyle.Flat,
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(60, 30, 100)
             };
-            injectBtn.Click += (s, e) => {
-                IntPtr robloxHandle = FindWindow(null, "Roblox");
-                if (robloxHandle != IntPtr.Zero) {
-                    injectBtn.Text = "ATTACHED! ✅";
-                    injectBtn.BackColor = Color.DarkGreen;
-                    MessageBox.Show("LH EX: Успешно подключено к Roblox. Теперь можно запускать скрипты!", "LH RECORDS");
-                } else {
-                    MessageBox.Show("Ошибка: Сначала запусти Roblox!", "LH RECORDS");
-                }
+            execBtn.Click += (s, e) => {
+                MessageBox.Show("LH EX: Скрипт отправлен! (Нужно подключить API DLL)", "LH RECORDS");
             };
-            this.Controls.Add(injectBtn);
+            this.Controls.Add(execBtn);
 
-            // Кнопка закрытия
-            Button closeBtn = new Button { Text = "X", Location = new Point(510, 10), FlatStyle = FlatStyle.Flat, ForeColor = Color.White };
-            closeBtn.Click += (s, e) => Application.Exit();
-            this.Controls.Add(closeBtn);
+            // Кнопка ATTACH
+            Button attachBtn = new Button {
+                Text = "ATTACH",
+                Size = new Size(120, 40),
+                Location = new Point(150, 310),
+                FlatStyle = FlatStyle.Flat,
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(40, 80, 40)
+            };
+            attachBtn.Click += (s, e) => {
+                if (FindWindow(null, "Roblox") != IntPtr.Zero) MessageBox.Show("Attached to Roblox!");
+                else MessageBox.Show("Roblox not found!");
+            };
+            this.Controls.Add(attachBtn);
+
+            // Выход
+            Button xBtn = new Button { Text = "X", Location = new Point(560, 10), FlatStyle = FlatStyle.Flat, ForeColor = Color.White };
+            xBtn.Click += (s, e) => Application.Exit();
+            this.Controls.Add(xBtn);
         }
 
         [STAThread]
