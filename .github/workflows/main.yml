@@ -1,16 +1,23 @@
 name: Build LH Launcher
 on: [push]
+
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v1.1
+
       - name: Compile LH EX
-        run: csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll main.cs
-      - name: Release LH EX
+        # Мы добавляем ссылки на все нужные библиотеки для Windows Forms
+        run: |
+          csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll /r:System.Data.dll /r:Accessibility.dll main.cs
+
+      - name: Upload LH_EX Executable
         uses: actions/upload-artifact@v3
         with:
-          name: LH_EX_PC
+          name: LH_EX_PC_Version
           path: LH_EX.exe
