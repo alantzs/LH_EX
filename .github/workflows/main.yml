@@ -12,12 +12,12 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
 
       - name: Compile LH EX
-        # Мы добавляем ссылки на все нужные библиотеки для Windows Forms
+        # Эта команда принудительно подключает формы и графику
         run: |
-          csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll /r:System.Data.dll /r:Accessibility.dll main.cs
+          csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll /r:Accessibility.dll main.cs
 
-      - name: Upload LH_EX Executable
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LH_EX_PC_Version
+          name: LH_EX_PC
           path: LH_EX.exe
