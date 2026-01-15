@@ -8,15 +8,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
       - name: Compile LH EX
+        # Мы указываем прямой путь к компилятору, который есть на каждом Windows-сервере GitHub
         run: |
-          csc /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll /r:Accessibility.dll main.cs
+          & "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:winexe /out:LH_EX.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.dll /r:Accessibility.dll main.cs
 
       - name: Upload Artifact
-        # Вот здесь мы ставим v4, чтобы Гитхаб не ругался
         uses: actions/upload-artifact@v4
         with:
           name: LH_EX_PC
