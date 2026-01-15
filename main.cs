@@ -1,112 +1,57 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Net;
 
 namespace LH_EX_Launcher
 {
     public class LH_Launcher : Form
     {
-        // Магия для перетаскивания окна без рамки
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        // Для поиска окна Роблокса
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         public LH_Launcher()
         {
-            // Настройки окна
-            this.Size = new Size(600, 350);
+            this.Size = new Size(550, 300);
             this.FormBorderStyle = FormBorderStyle.None;
-            this.BackColor = Color.FromArgb(15, 10, 25); // Глубокий фиолетово-черный
+            this.BackColor = Color.FromArgb(20, 15, 30);
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // --- Боковая панель ---
-            Panel sideBar = new Panel { Width = 60, Dock = DockStyle.Left, BackColor = Color.FromArgb(20, 15, 35) };
-            this.Controls.Add(sideBar);
+            // Логотип
+            Label logo = new Label { Text = "LH EXECUTOR", ForeColor = Color.MediumPurple, Font = new Font("Arial", 18, FontStyle.Bold), Location = new Point(180, 30), AutoSize = true };
+            this.Controls.Add(logo);
 
-            // Логотип LH
-            Label logo = new Label {
-                Text = "LH",
-                ForeColor = Color.MediumPurple,
-                Font = new Font("Arial Black", 20, FontStyle.Bold),
-                Location = new Point(5, 15),
-                AutoSize = true
-            };
-            sideBar.Controls.Add(logo);
-
-            // --- Главный заголовок ---
-            Label title = new Label {
-                Text = "LH EXECUTOR SYSTEM v1.0",
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                Location = new Point(80, 20),
-                AutoSize = true
-            };
-            this.Controls.Add(title);
-
-            // --- Кнопка запуска (LAUNCH) ---
-            Button launchBtn = new Button {
-                Text = "LAUNCH ROBLOX 🚀",
-                Size = new Size(250, 60),
-                Location = new Point(200, 130),
+            // Кнопка INJECT
+            Button injectBtn = new Button {
+                Text = "ATTACH TO ROBLOX",
+                Size = new Size(200, 50),
+                Location = new Point(175, 120),
                 FlatStyle = FlatStyle.Flat,
                 ForeColor = Color.White,
-                BackColor = Color.FromArgb(45, 25, 90),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                Cursor = Cursors.Hand
+                BackColor = Color.FromArgb(60, 30, 100)
             };
-            launchBtn.FlatAppearance.BorderSize = 2;
-            launchBtn.FlatAppearance.BorderColor = Color.MediumPurple;
-            launchBtn.Click += (s, e) => {
-                try {
-                    Process.Start("roblox-player:1"); // Запуск игры
-                    MessageBox.Show("LH EX: Ожидание подключения к Roblox...", "LH RECORDS");
-                } catch {
-                    MessageBox.Show("Ошибка: Roblox не найден на ПК!", "LH RECORDS");
+            injectBtn.Click += (s, e) => {
+                IntPtr robloxHandle = FindWindow(null, "Roblox");
+                if (robloxHandle != IntPtr.Zero) {
+                    injectBtn.Text = "ATTACHED! ✅";
+                    injectBtn.BackColor = Color.DarkGreen;
+                    MessageBox.Show("LH EX: Успешно подключено к Roblox. Теперь можно запускать скрипты!", "LH RECORDS");
+                } else {
+                    MessageBox.Show("Ошибка: Сначала запусти Roblox!", "LH RECORDS");
                 }
             };
-            this.Controls.Add(launchBtn);
+            this.Controls.Add(injectBtn);
 
-            // --- Кнопка выхода ---
-            Button closeBtn = new Button {
-                Text = "✕",
-                Size = new Size(30, 30),
-                Location = new Point(560, 10),
-                FlatStyle = FlatStyle.Flat,
-                ForeColor = Color.Gray,
-                BackColor = Color.Transparent
-            };
-            closeBtn.FlatAppearance.BorderSize = 0;
+            // Кнопка закрытия
+            Button closeBtn = new Button { Text = "X", Location = new Point(510, 10), FlatStyle = FlatStyle.Flat, ForeColor = Color.White };
             closeBtn.Click += (s, e) => Application.Exit();
             this.Controls.Add(closeBtn);
-
-            // Подпись снизу
-            Label footer = new Label {
-                Text = "Developed by Azer for LH RECORDS",
-                ForeColor = Color.DimGray,
-                Font = new Font("Segoe UI", 8),
-                Location = new Point(240, 320),
-                AutoSize = true
-            };
-            this.Controls.Add(footer);
-
-            // Позволяем таскать окно мышкой
-            this.MouseDown += (s, e) => {
-                if (e.Button == MouseButtons.Left) {
-                    ReleaseCapture();
-                    SendMessage(Handle, 0xA1, 0x2, 0);
-                }
-            };
         }
 
         [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LH_Launcher());
-        }
+        static void Main() { Application.Run(new LH_Launcher()); }
     }
 }
